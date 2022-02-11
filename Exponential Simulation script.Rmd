@@ -14,9 +14,10 @@ distributions of the mean and variance of the exponential distribution
 which will then be compared to the theoretical mean and standard deviation of the
 distribution. 
 
-```{r}
+```{r,message=FALSE}
 library(ggplot2)
-
+library(gridExtra)
+library(cowplot)
 ```
 
 ## Simulations
@@ -37,13 +38,14 @@ samp<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 
 ## Sample Mean vs. Theoretical Mean
 This next chunk of code will show a plot of the means from the Monte Carlo 
-simulation with the theoretical mean overlayed as a dashed red vertical line.
-``` {r,warnings=False,message=FALSE}
+simulation with the theoretical mean overlayed as a dashed red vertical line. The
+theoretical mean is calculated as 1/lambda
+``` {r}
 # Theoretical mean
 Tmean<-1/lambda
 # The function rowMeans calulates the mean for each row (one simulation), which 
 #creates a distribution of means based on the Monte Carlo simulation
-meanplot<-ggplot()+geom_histogram(aes(rowMeans(samp)),color="black",fill="lightblue")
+meanplot<-ggplot()+geom_histogram(aes(rowMeans(samp)),bins=30,color="black",fill="lightblue")
 meanplot+geom_vline(xintercept=Tmean,linetype="dashed",color="red",size=1.5) +
     ggtitle("Distribution of Means of Exponential Simulation") +
     xlab("Means")+
@@ -58,12 +60,31 @@ around the theoretical mean (vertical red dashed line).
 ## Sample Variance vs. Theoretical Variance
 This next chunk of code will show a plot of the variance from the Monte Carlo 
 simulation with the theoretical variance overlayed as a dashed red vertical line.
-``` {r,warnings=False,message=FALSE}
-# Need to square the SD to get the variance
-varplot<-ggplot()+geom_histogram(aes(sds),color="black",fill="darkgreen")
-varplot+geom_vline(xintercept=sqrt(Tvar),linetype="dashed",color="red",size=1.5) +
-    ggtitle("Distribution of Variance of Exponential Simulation") +
+The theoretical variance for exponential distribution is calculated as 1/lambda^2.
+``` {r}
+#Theoretical variance
+Tvar<-1/lambda^2
+# Using the apply function to calculate the variance for each row (one simulation),
+# which creates a distribution of simulated variances
+varplot<-ggplot()+
+    geom_histogram(aes(apply(samp,1,var)),bins=30,color="black",fill="darkgreen")+
+    geom_vline(xintercept=Tvar,linetype="dashed",color="red",size=1.5) +
+    ggtitle("Distribution of Variance \nof Exponential Simulation") +
     xlab("Variance")+
     theme(plot.title = element_text(hjust = 0.5))
-    
+
+#Theoretical SD
+Tsd<-sqrt(Tvar)
+# Using the apply function to calculate the SD for each row (one simulation),
+# which creates a distribution of simulated SDs
+sdplot<-ggplot()+
+    geom_histogram(aes(apply(samp,1,sd)),bins=30,color="black",fill="lightgreen")+
+    geom_vline(xintercept=Tsd,linetype="dashed",color="red",size=1.5) +
+    ggtitle("Distribution of Standard Deviation \nof Exponential Simulation") +
+    xlab("Standard Deviation")+
+    theme(plot.title = element_text(hjust = 0.5))
+grid.arrange(varplot,sdplot,ncol=2)
+
 ```
+
+
