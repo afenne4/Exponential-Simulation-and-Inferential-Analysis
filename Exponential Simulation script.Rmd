@@ -40,3 +40,14 @@ for (i in 1:S){
 }
 ```
 
+## Sample Mean vs. Theoretical Mean
+This next chunk of code will show a plot of the means from the Monte Carlo 
+simulation with the theoretical mean overlayed as a vertical line.
+``` {r,warnings=False,message=FALSE}
+meanplot<-ggplot()+geom_histogram(aes(means),color="black",fill="lightblue")
+meanplot+geom_vline(xintercept=Tmean,linetype="dashed",color="red",size=1.5) +
+    ggtitle("Distribution of Means of Exponential Simulation") +
+    xlab("Means")+
+    theme(plot.title = element_text(hjust = 0.5))
+    
+```
