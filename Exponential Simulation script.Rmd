@@ -7,9 +7,10 @@ output: pdf_document
 
 # Simulating the Exponential distribution
 
+## Synopsis
 This project will compare how statistics of a non-normal distribution are 
 themselves normally distributed. A Monte Carlo procedure will be used to simulate
-distributions of the mean and standard deviation of the exponential distribution
+distributions of the mean and variance of the exponential distribution
 which will then be compared to the theoretical mean and standard deviation of the
 distribution. 
 
@@ -19,35 +20,50 @@ library(ggplot2)
 ```
 
 ## Simulations
-This simulation will use samples of size 40 with lambda=.2. The theoretical mean
-and standarddeviation can be calculated as 1/lambda. 
+This simulation will use samples of size 40 with lambda=.2. There will be 1000
+simulations to create a distribution
 
 ``` {r}
 lambda=.2
-#Theoretical mean and SD
-Tmean<-1/lambda
-Tsd<-1/lambda
 #Number of Monte Carlo samples
 S=1000
-#vectors to store means and SDs of Monte Carlo samples
-means<-vector(mode="numeric",length=S)
-sds<-vector(mode="numeric",length=S)
-for (i in 1:S){
-#Sample sizes of 40 drawn from the exponential distribution with rate lambda
-    samp<-rexp(40,lambda)
-    means[i]<-mean(samp)
-    sds[i]<-sd(samp)
-}
+#size of Monte Carlo samples
+n=40
+#samples stored in matrix where columns are the size of the monte carlo samples
+#and each row is an individual simulation
+samp<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
+
 ```
 
 ## Sample Mean vs. Theoretical Mean
 This next chunk of code will show a plot of the means from the Monte Carlo 
-simulation with the theoretical mean overlayed as a vertical line.
+simulation with the theoretical mean overlayed as a dashed red vertical line.
 ``` {r,warnings=False,message=FALSE}
-meanplot<-ggplot()+geom_histogram(aes(means),color="black",fill="lightblue")
+# Theoretical mean
+Tmean<-1/lambda
+# The function rowMeans calulates the mean for each row (one simulation), which 
+#creates a distribution of means based on the Monte Carlo simulation
+meanplot<-ggplot()+geom_histogram(aes(rowMeans(samp)),color="black",fill="lightblue")
 meanplot+geom_vline(xintercept=Tmean,linetype="dashed",color="red",size=1.5) +
     ggtitle("Distribution of Means of Exponential Simulation") +
     xlab("Means")+
+    theme(plot.title = element_text(hjust = 0.5))
+    
+```
+
+This histogram shows that the distibution of means sampled from the exponential
+distribution is roughly normal with the highest density of responses centered 
+around the theoretical mean (vertical red dashed line).
+
+## Sample Variance vs. Theoretical Variance
+This next chunk of code will show a plot of the variance from the Monte Carlo 
+simulation with the theoretical variance overlayed as a dashed red vertical line.
+``` {r,warnings=False,message=FALSE}
+# Need to square the SD to get the variance
+varplot<-ggplot()+geom_histogram(aes(sds),color="black",fill="darkgreen")
+varplot+geom_vline(xintercept=sqrt(Tvar),linetype="dashed",color="red",size=1.5) +
+    ggtitle("Distribution of Variance of Exponential Simulation") +
+    xlab("Variance")+
     theme(plot.title = element_text(hjust = 0.5))
     
 ```
