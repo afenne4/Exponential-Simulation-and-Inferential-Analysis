@@ -18,6 +18,7 @@ distribution.
 library(ggplot2)
 library(gridExtra)
 library(cowplot)
+library(qqplotr)
 ```
 
 ## Simulations
@@ -126,11 +127,36 @@ reference line does not conform to a normal distribution, with larger deviations
 indicating a greater departure from normality.
 
 ```{r}
-    meanplot+
+    meanplot2<-meanplot+
     geom_histogram(aes(y=..density..),binwidth = binsize,color="black",fill="lightblue")+
-    geom_vline(data=Tmean,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)+
+    geom_vline(data=Tmean,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+
     stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simmean$means),
                                               sd=mean(simsd$SD)/sqrt(n)))
 
+    varplot2<-varplot+
+    geom_histogram(aes(y=..density..),binwidth=2.5,color="black",fill="darkgreen")+
+    geom_vline(data=Tvar,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+ 
+        stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simvar$VAR),
+                                              sd=mean(simsd$SD)))
+    
 
+    qqmeanplot<-ggplot(simmean,aes(sample=means))+
+        stat_qq_band()+
+        stat_qq_line(color='red',lwd=1)+
+        stat_qq_point() +
+        labs(title="QQ plot of Simulated Means \nfrom Exponential Distribution") + 
+        xlab("Theoretical Normal Values")+ylab("Simulated Values")+
+        theme(plot.title = element_text(hjust = 0.5))
+
+    
+    qqvarplot<-ggplot(simvar,aes(sample=VAR))+
+        stat_qq_band()+
+        stat_qq_line(color='red',lwd=1)+
+        stat_qq_point() +
+        labs(title="QQ plot of Simulated Variance \nfrom Exponential Distribution") + 
+        xlab("Theoretical Normal Values")+ylab("Simulated Values")+
+        theme(plot.title = element_text(hjust = 0.5))
+    
+      grid.arrange(meanplot2,varplot2,qqmeanplot,qqvarplot,nrow=2,ncol=2)
+     
 ```
