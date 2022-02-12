@@ -79,7 +79,7 @@ Tvar<-(1/lambda^2)
 Tvar<-data.frame(Type="Theoretical Variance",val=Tvar)
 # Using the apply function to calculate the variance for each row (one simulation),
 # which creates a distribution of simulated variances
-simvar<-data.frame(VAR=apply(samp,1,var))
+simvar<-data.frame(VAR=apply(sim,1,var))
 
 varplot<-ggplot(data=simvar,aes(VAR))+
     ggtitle("Distribution of Variance \nof Exponential Simulation") +
@@ -90,25 +90,27 @@ varplot<-ggplot(data=simvar,aes(VAR))+
 varplot1<-varplot+
     geom_histogram(aes(y=..count..),binwidth=2.5,color="black",fill="darkgreen")+
     geom_vline(data=Tvar,aes(xintercept=val,color=Type),linetype="dashed",size=1.5) 
-varplot1
+
+
 #Theoretical SD
-# Tsd<-sqrt(Tvar$val)
-# Tsd<-data.frame(Type="Theoretical SD",val=Tsd)
-# 
-# # Using the apply function to calculate the SD for each row (one simulation),
-# # which creates a distribution of simulated SDs
-# simsd<-data.frame(SD=apply(samp,1,sd))
-# 
-# sdplot<-ggplot(data=simsd,aes(SD))+
-#     ggtitle("Distribution of Standard Deviation \nof Exponential Simulation") +
-#     xlab("Standard Deviation")+
-#     theme(plot.title = element_text(hjust = 0.5),
-#           legend.title=element_blank())
-# 
-# sdplot1<-sdplot+
-#     geom_histogram(aes(y=..count..),binwidth=binsize,color="black",fill="lightgreen")+
-#     geom_vline(data=Tsd,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)
-# grid.arrange(varplot1,sdplot1,ncol=2)
+ Tsd<-sqrt(Tvar$val)
+ Tsd<-data.frame(Type="Theoretical SD",val=Tsd)
+ 
+ # Using the apply function to calculate the SD for each row (one simulation),
+ # which creates a distribution of simulated SDs
+ simsd<-data.frame(SD=apply(sim,1,sd))
+ 
+ sdplot<-ggplot(data=simsd,aes(SD))+
+     ggtitle("Distribution of Standard Deviation \nof Exponential Simulation") +
+     xlab("Standard Deviation")+
+     theme(plot.title = element_text(hjust = 0.5),
+           legend.title=element_blank())
+ 
+ sdplot1<-sdplot+
+     geom_histogram(aes(y=..count..),binwidth=binsize,color="black",fill="lightgreen")+
+     geom_vline(data=Tsd,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)
+ 
+ grid.arrange(varplot1,sdplot1,nrow=2)
 
 ```
 
@@ -125,7 +127,10 @@ indicating a greater departure from normality.
 
 ```{r}
     meanplot+
-    stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(means),sd=mean(simsd)/sqrt(n)))
+    geom_histogram(aes(y=..density..),binwidth = binsize,color="black",fill="lightblue")+
+    geom_vline(data=Tmean,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)+
+    stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simmean$means),
+                                              sd=mean(simsd$SD)/sqrt(n)))
 
 
 ```
