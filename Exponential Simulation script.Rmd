@@ -32,7 +32,7 @@ S=1000
 n=40
 #samples stored in matrix where columns are the size of the monte carlo samples
 #and each row is an individual simulation
-samp<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
+sim<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 
 ```
 
@@ -43,14 +43,24 @@ theoretical mean is calculated as 1/lambda
 ``` {r}
 # Theoretical mean
 Tmean<-1/lambda
+Tmean<-data.frame(Type="Theoretical Mean",val=Tmean)
+
 # The function rowMeans calulates the mean for each row (one simulation), which 
 #creates a distribution of means based on the Monte Carlo simulation
-meanplot<-ggplot()+geom_histogram(aes(rowMeans(samp)),bins=30,color="black",fill="lightblue")
-meanplot+geom_vline(xintercept=Tmean,linetype="dashed",color="red",size=1.5) +
-    ggtitle("Distribution of Means of Exponential Simulation") +
+simmean<-data.frame(means=rowMeans(sim))
+# standardize bin width for all plots
+binsize=.2
+#combine mean and theoretical mean into one dataframe
+meanplot<-ggplot(data=simmean,aes(means))+
+    ggtitle("Distribution of Means \nof Exponential Simulation") +
     xlab("Means")+
-    theme(plot.title = element_text(hjust = 0.5))
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank())
     
+
+meanplot+geom_histogram(aes(y=..count..),binwidth = binsize,color="black",fill="lightblue")+
+    geom_vline(data=Tmean,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)
+
 ```
 
 This histogram shows that the distibution of means sampled from the exponential
@@ -58,33 +68,64 @@ distribution is roughly normal with the highest density of responses centered
 around the theoretical mean (vertical red dashed line).
 
 ## Sample Variance vs. Theoretical Variance
-This next chunk of code will show a plot of the variance from the Monte Carlo 
-simulation with the theoretical variance overlayed as a dashed red vertical line.
-The theoretical variance for exponential distribution is calculated as 1/lambda^2.
+This next chunk of code will show a plot of the variance and standard deviation
+from the Monte Carlo simulation with the theoretical variance and standard deviation
+overlayed as a dashed red vertical line. The theoretical variance for exponential 
+distribution is calculated as E(Var)=1/lambda^2. The theoretical standard deviation
+is then just sqrt(E(Var))
 ``` {r}
 #Theoretical variance
-Tvar<-1/lambda^2
+Tvar<-(1/lambda^2)
+Tvar<-data.frame(Type="Theoretical Variance",val=Tvar)
 # Using the apply function to calculate the variance for each row (one simulation),
 # which creates a distribution of simulated variances
-varplot<-ggplot()+
-    geom_histogram(aes(apply(samp,1,var)),bins=30,color="black",fill="darkgreen")+
-    geom_vline(xintercept=Tvar,linetype="dashed",color="red",size=1.5) +
+simvar<-data.frame(VAR=apply(samp,1,var))
+
+varplot<-ggplot(data=simvar,aes(VAR))+
     ggtitle("Distribution of Variance \nof Exponential Simulation") +
     xlab("Variance")+
-    theme(plot.title = element_text(hjust = 0.5))
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank())
 
+varplot1<-varplot+
+    geom_histogram(aes(y=..count..),binwidth=2.5,color="black",fill="darkgreen")+
+    geom_vline(data=Tvar,aes(xintercept=val,color=Type),linetype="dashed",size=1.5) 
+varplot1
 #Theoretical SD
-Tsd<-sqrt(Tvar)
-# Using the apply function to calculate the SD for each row (one simulation),
-# which creates a distribution of simulated SDs
-sdplot<-ggplot()+
-    geom_histogram(aes(apply(samp,1,sd)),bins=30,color="black",fill="lightgreen")+
-    geom_vline(xintercept=Tsd,linetype="dashed",color="red",size=1.5) +
-    ggtitle("Distribution of Standard Deviation \nof Exponential Simulation") +
-    xlab("Standard Deviation")+
-    theme(plot.title = element_text(hjust = 0.5))
-grid.arrange(varplot,sdplot,ncol=2)
+# Tsd<-sqrt(Tvar$val)
+# Tsd<-data.frame(Type="Theoretical SD",val=Tsd)
+# 
+# # Using the apply function to calculate the SD for each row (one simulation),
+# # which creates a distribution of simulated SDs
+# simsd<-data.frame(SD=apply(samp,1,sd))
+# 
+# sdplot<-ggplot(data=simsd,aes(SD))+
+#     ggtitle("Distribution of Standard Deviation \nof Exponential Simulation") +
+#     xlab("Standard Deviation")+
+#     theme(plot.title = element_text(hjust = 0.5),
+#           legend.title=element_blank())
+# 
+# sdplot1<-sdplot+
+#     geom_histogram(aes(y=..count..),binwidth=binsize,color="black",fill="lightgreen")+
+#     geom_vline(data=Tsd,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)
+# grid.arrange(varplot1,sdplot1,ncol=2)
 
 ```
 
 
+## Normality of Simulated Statistics
+We will now examine the distribution of the mean, variance, and standard deviation
+of the Monte Carlo Simulations to see how close they approximate a normal distribution
+and conform to the central limit theorem. We will do this in two ways. The first
+is to overlay a normal PDF on the histograms, and the second is to use a QQplot.
+The QQplot is nice because it provides a very obvious comparison of data to the
+theoretical normal distribution. Simulated data that does not fall on the diagonal 
+reference line does not conform to a normal distribution, with larger deviations
+indicating a greater departure from normality.
+
+```{r}
+    meanplot+
+    stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(means),sd=mean(simsd)/sqrt(n)))
+
+
+```
