@@ -24,7 +24,7 @@ library(qqplotr)
 This simulation will use samples of size 40 with lambda=.2. There will be 1000
 simulations to create a distribution
 
-``` {r}
+``` {r initial simulation}
 set.seed(11111)
 lambda=.2
 #Number of Monte Carlo samples
@@ -41,7 +41,7 @@ sim<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 This next chunk of code will show a plot of the means from the Monte Carlo 
 simulation with the theoretical mean overlayed as a dashed red vertical line. The
 theoretical mean is calculated as 1/lambda
-``` {r}
+``` {r comparing simulated mean and theoretical mean}
 # Theoretical mean
 Tmean<-1/lambda
 Tmean<-data.frame(Type="Theoretical Mean",val=Tmean)
@@ -66,15 +66,22 @@ meanplot+geom_histogram(aes(y=..count..),binwidth = binsize,color="black",fill="
 
 This histogram shows that the distibution of means sampled from the exponential
 distribution is roughly normal with the highest density of responses centered 
-around the theoretical mean (vertical red dashed line).
+around the theoretical mean (vertical red dashed line). The actual values of the
+theoretical and simulated means are presented below. The simulated values are 
+incredibly close to the theoretical value.
+
+```{r}
+meancompare<-data.frame(Mean=c("","Simulated Mean"),
+                        Value=c(1/lambda,mean(simmean$means)))
+meancompare
+```
 
 ## Sample Variance vs. Theoretical Variance
 This next chunk of code will show a plot of the variance and standard deviation
-from the Monte Carlo simulation with the theoretical variance and standard deviation
-overlayed as a dashed red vertical line. The theoretical variance for exponential 
-distribution is calculated as E(Var)=1/lambda^2. The theoretical standard deviation
-is then just sqrt(E(Var))
-``` {r}
+from the Monte Carlo simulation with the theoretical variance overlayed as a
+dashed red vertical line. The theoretical variance for exponential 
+distribution is calculated as E(Var)=1/lambda^2. 
+``` {r plot simulated variance}
 #Theoretical variance
 Tvar<-(1/lambda^2)
 Tvar<-data.frame(Type="Theoretical Variance",val=Tvar)
@@ -97,6 +104,11 @@ varplot1
 ```
 
 
+```{r}
+varcompare<-data.frame(Variance=c("Theoretical Variance","Average Simulated Variance"),
+                        Value=c(1/lambda^2,mean(simvar$VAR)))
+varcompare
+```
 
 
 ## Normality of Simulated Statistics
