@@ -1,0 +1,35 @@
+---
+title: "Inferential Analysis of Tooth Decay"
+author: "Alex Fennell"
+
+output: pdf_document
+---
+
+```{r libraries}
+library(dplyr)
+library(ggplot2)
+```
+
+
+```{r tooth data exploration}
+TGdata<-ToothGrowth
+str(TGdata)
+TGdata$dose<-as.factor(TGdata$dose)
+
+Summary_TGdata<-TGdata %>%
+    group_by(supp,dose)%>%
+    summarise(MEAN=mean(len),SD=sd(len),MAX=max(len),MIN=min(len),COUNT=n())
+Summary_TGdata
+```
+
+```{r tooth data mean comparison}
+
+suppcomp<-TGdata %>%
+    group_by(supp)%>%
+    summarise(MEAN=mean(len),SD=sd(len),MAX=max(len),MIN=min(len))
+suppcomp
+
+
+
+
+```
