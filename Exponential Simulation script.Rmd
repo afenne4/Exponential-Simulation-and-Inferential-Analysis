@@ -1,7 +1,6 @@
 ---
 title: "Exponential Simulation and Inference"
 author: "Alex Fennell"
-date: "2/11/2022"
 output: pdf_document
 ---
 
