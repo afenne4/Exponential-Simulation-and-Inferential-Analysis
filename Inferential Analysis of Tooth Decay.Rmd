@@ -4,6 +4,12 @@ author: "Alex Fennell"
 
 output: pdf_document
 ---
+# Synopsis
+
+The purpose of this analysis is to examine the Tooth Growth data set and perform
+some basic inferential statistics on it. The first step of this analysis is an
+exploratory data analysis, which will inform how to go about an inferential analysis.
+
 
 ```{r libraries}
 library(dplyr)
@@ -11,9 +17,23 @@ library(ggplot2)
 ```
 
 
+## Reading in the data
+The Tooth Growth data set is already available as it is part of the R datasets
+package. Using the str function, we can see what the basic structure of the dataset 
+is.
+
 ```{r tooth data exploration}
 TGdata<-ToothGrowth
 str(TGdata)
+```
+
+This shows the dataset with 3 variables, len-length of tooth growth, 
+supp-The supplement type, and dose-the numeric does in mg per day. The first thing
+we can do is change dose to a factor variable and then look at various summary statistics
+as a function of the two factor variables, dose and supplement type.
+
+```{r initial data summary,message=FALSE,warning=FALSE}   
+# Need to change dose column into a factor rather than a numeric variable
 TGdata$dose<-as.factor(TGdata$dose)
 
 Summary_TGdata<-TGdata %>%
@@ -22,14 +42,23 @@ Summary_TGdata<-TGdata %>%
 Summary_TGdata
 ```
 
-```{r tooth data mean comparison}
+This output shows that mean length of odontoblasts increases with dose across both
+supplement types. The maximum and minimum values also increase as a funciton of 
+increasing dosage. The sample size is the same across all supplement type and
+dose manipulations. It is difficult to tell if the mean odontoblast length differs
+across supplement types, so in the next block of code, we will examine this.
 
+```{r tooth data mean comparison}
 suppcomp<-TGdata %>%
     group_by(supp)%>%
     summarise(MEAN=mean(len),SD=sd(len),MAX=max(len),MIN=min(len))
 suppcomp
-
-
-
-
 ```
+ 
+ This shows that on average the mean odntoblast length for guinea pigs given 
+ orange juice is longer than guinea pigs given ascorbic acid. In addition to this,
+ the maximum and minimum values for guinea pigs in the OJ group are not as extreme
+ as those in the VC group. 
+ 
+ ### Boxplot analysis
+
