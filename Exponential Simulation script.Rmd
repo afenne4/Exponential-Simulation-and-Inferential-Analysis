@@ -26,6 +26,7 @@ This simulation will use samples of size 40 with lambda=.2. There will be 1000
 simulations to create a distribution
 
 ``` {r}
+set.seed(11111)
 lambda=.2
 #Number of Monte Carlo samples
 S=1000
@@ -92,52 +93,37 @@ varplot1<-varplot+
     geom_histogram(aes(y=..count..),binwidth=2.5,color="black",fill="darkgreen")+
     geom_vline(data=Tvar,aes(xintercept=val,color=Type),linetype="dashed",size=1.5) 
 
-
-#Theoretical SD
- Tsd<-sqrt(Tvar$val)
- Tsd<-data.frame(Type="Theoretical SD",val=Tsd)
- 
- # Using the apply function to calculate the SD for each row (one simulation),
- # which creates a distribution of simulated SDs
- simsd<-data.frame(SD=apply(sim,1,sd))
- 
- sdplot<-ggplot(data=simsd,aes(SD))+
-     ggtitle("Distribution of Standard Deviation \nof Exponential Simulation") +
-     xlab("Standard Deviation")+
-     theme(plot.title = element_text(hjust = 0.5),
-           legend.title=element_blank())
- 
- sdplot1<-sdplot+
-     geom_histogram(aes(y=..count..),binwidth=binsize,color="black",fill="lightgreen")+
-     geom_vline(data=Tsd,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)
- 
- grid.arrange(varplot1,sdplot1,nrow=2)
+varplot1
 
 ```
 
 
-## Normality of Simulated Statistics
-We will now examine the distribution of the mean, variance, and standard deviation
-of the Monte Carlo Simulations to see how close they approximate a normal distribution
-and conform to the central limit theorem. We will do this in two ways. The first
-is to overlay a normal PDF on the histograms, and the second is to use a QQplot.
-The QQplot is nice because it provides a very obvious comparison of data to the
-theoretical normal distribution. Simulated data that does not fall on the diagonal 
-reference line does not conform to a normal distribution, with larger deviations
-indicating a greater departure from normality.
 
-```{r}
+
+## Normality of Simulated Statistics
+We will now examine the distribution of the mean, and variance, of the Monte 
+Carlo Simulations to see how close they approximate a normal distribution
+and conform to the central limit theorem. We will do this in two ways. The first
+is to overlay a normal PDF (black curve) on the histograms, and the second is to use a QQ plot.
+The QQ plot provides a very obvious comparison of data to the theoretical normal
+distribution. Simulated data that does not fall on the diagonal reference line 
+does not conform to a normal distribution, with larger deviationsindicating a 
+greater departure from normality.The dark gray region surrounding the diagonal
+reference line is a 95% confidence interval so as to indicate how much the 
+simulated data differs or conforms to a normal distribution.
+
+```{r Figure to demonstrate normality}
     meanplot2<-meanplot+
     geom_histogram(aes(y=..density..),binwidth = binsize,color="black",fill="lightblue")+
     geom_vline(data=Tmean,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+
     stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simmean$means),
-                                              sd=mean(simsd$SD)/sqrt(n)))
+                                              sd=sd(simmean$means)))
 
     varplot2<-varplot+
     geom_histogram(aes(y=..density..),binwidth=2.5,color="black",fill="darkgreen")+
     geom_vline(data=Tvar,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+ 
         stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simvar$VAR),
-                                              sd=mean(simsd$SD)))
+                                              sd=sd(simvar$VAR)))
     
 
     qqmeanplot<-ggplot(simmean,aes(sample=means))+
@@ -160,3 +146,82 @@ indicating a greater departure from normality.
       grid.arrange(meanplot2,varplot2,qqmeanplot,qqvarplot,nrow=2,ncol=2)
      
 ```
+
+The plots in the left column of this figure show that the distribution of 
+simulated means approximates a normal distribution with the exception of a few values.
+On the other hand, the distribution of simulated variances is highly skewed and 
+deviates from normality.The QQ plot shows that the simulated variances deviate 
+both in the leading edge of the distribution and the tail of the distribution. This 
+is because the samplesize used in the simulation (n=40) is too small of a sample 
+for variance to conform to a normal distribution as the central limit theorem 
+states. Variance is heavily influenced by skewed distribution, and given the 
+heavily skewed nature of the exponential distribution this result is not surprising. 
+In the next section of code I will re-run the simulation with a larger sample and 
+demonstrate how this produces a normally distibuted variance.
+
+##Exponential Simulation with Large Sample Size
+```{r normality of simulated data-larger sample size}
+#We will still use the same number of simulations for this exercise
+#size of Monte Carlo samples
+n=300
+#Monte Carlo Simulation
+set.seed(11111)
+sim2<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
+#Calculating means and variances using the newly simulated data
+simmean2<-data.frame(means=rowMeans(sim2))
+simvar2<-data.frame(VAR=apply(sim2,1,var))
+simsd2<-data.frame(SD=apply(sim2,1,sd))
+
+binsize=.06
+#New plot for the distribution of simulated means with n=300
+meanplot3<-ggplot(data=simmean2,aes(means))+
+    ggtitle("Distribution of Means \nof Exponential Simulation n=300") +
+    xlab("Means")+
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank())+
+    geom_histogram(aes(y=..density..),binwidth = binsize,color="black",fill="lightblue")+
+    geom_vline(data=Tmean,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+
+    stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simmean2$means),
+                                              sd=sd(simmean2$means)))
+
+
+varplot3<-ggplot(data=simvar2,aes(VAR))+
+    ggtitle("Distribution of Variance \nof Exponential Simulation n=300") +
+    xlab("Variance")+
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank())+
+    geom_histogram(aes(y=..density..),binwidth=.7,color="black",fill="darkgreen")+
+    geom_vline(data=Tvar,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+ 
+        stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simvar2$VAR),
+                                              sd=sd(simvar2$VAR)))
+
+
+qqmeanplot2<-ggplot(simmean2,aes(sample=means))+
+        stat_qq_band()+
+        stat_qq_line(color='red',lwd=1)+
+        stat_qq_point() +
+        labs(title="QQ plot of Simulated Means from \nExponential Distribution n=300") + 
+        xlab("Theoretical Normal Values")+ylab("Simulated Values")+
+        theme(plot.title = element_text(hjust = 0.5))
+
+    
+qqvarplot2<-ggplot(simvar2,aes(sample=VAR))+
+        stat_qq_band()+
+        stat_qq_line(color='red',lwd=1)+
+        stat_qq_point() +
+        labs(title="QQ plot of Simulated Variance from \nExponential Distribution n=300") + 
+        xlab("Theoretical Normal Values")+ylab("Simulated Values")+
+        theme(plot.title = element_text(hjust = 0.5))
+    
+grid.arrange(meanplot3,varplot3,qqmeanplot2,qqvarplot2,nrow=2,ncol=2)
+```
+
+With 300 samples in each simulation, both the distributions of simulated means and 
+variances appear to be normally distributed. The pdf of the normal distribution 
+(black curve) overlays the histogram of simulated values and conforms quite well.
+In the QQ plot most all values for the simulated means and variances fall within
+the 95% confidence interval (dark grey area) indicating the distributions of 
+simulated means and variances are normally distributed. It can also be observed
+that spread of the simulated means and variances is much more concentrated around
+the true theoretical values in comparison to the previous simulations with n=40.
+This is an excellent demonstration of the power of the central limit theorem.
