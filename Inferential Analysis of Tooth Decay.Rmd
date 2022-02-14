@@ -15,7 +15,7 @@ exploratory data analysis, which will inform how to go about an inferential anal
 library(dplyr)
 library(ggplot2)
 ```
-
+# Exploratory Data Analysis
 
 ## Reading in the data
 The Tooth Growth data set is already available as it is part of the R datasets
@@ -60,5 +60,27 @@ suppcomp
  the maximum and minimum values for guinea pigs in the OJ group are not as extreme
  as those in the VC group. 
  
- ### Boxplot analysis
+## Boxplot analysis
+We can use boxplots as a method to get a visual understanding for how the data is
+behaving.
 
+```{r boxplot analysis}
+box1<-ggplot(TGdata,aes(x=dose,y=len,fill=supp))+
+    geom_boxplot(notch=FALSE)+
+    labs(title="Length of Odontoblasts as a Function of\n Supplement Type and Doseage",
+           x="Dose (mg/day)", y="Length",fill="Supplement \nType")+
+    theme(plot.title = element_text(hjust = 0.5))
+
+box1
+```
+
+This boxplot better demonstrates the relationship between supplement type, dose,
+and odontoblast length. In agreement with the previous outputs, it can be seen that
+odontoblast length increases as the daily doseage increases across both supplement 
+types. The two supplement types do seem to differ in their efficacy at lower doseages.
+The OJ supplement results in more odontoblast length than the VC Supplement at .5 
+and 1 mg/day doseges. At the 2mg/day dose, both groups have a similar median value,
+but the OJ supplement has less spread than the VC supplement. Given these apparent 
+differences, we can now empirically test this using inferential methods
+
+#Inferential Analysis
