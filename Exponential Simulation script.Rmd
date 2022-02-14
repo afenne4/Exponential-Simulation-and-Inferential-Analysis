@@ -11,7 +11,9 @@ This project will compare how statistics of a non-normal distribution are
 themselves normally distributed. A Monte Carlo procedure will be used to simulate
 distributions of the mean and variance of the exponential distribution
 which will then be compared to the theoretical mean and standard deviation of the
-distribution. 
+distribution. The simulated distributions of statistics will then be compared to a normal 
+distribution to see if the statistics derived from a skewed distribution are themselves
+normally distributed.
 
 ```{r,message=FALSE,warning=FALSE}
 library(ggplot2)
@@ -22,7 +24,7 @@ library(qqplotr)
 
 ## Simulations
 This simulation will use samples of size 40 with lambda=.2. There will be 1000
-simulations to create a distribution
+simulations used to create a distribution
 
 ``` {r initial simulation}
 set.seed(11111)
@@ -31,7 +33,7 @@ lambda=.2
 S=1000
 #size of Monte Carlo samples
 n=40
-#samples stored in matrix where columns are the size of the monte carlo samples
+#samples stored in matrix where columns are the size of the Monte Carlo samples
 #and each row is an individual simulation
 sim<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 
@@ -71,7 +73,7 @@ theoretical and simulated means are presented below. The simulated values are
 incredibly close to the theoretical value.
 
 ```{r}
-meancompare<-data.frame(Mean=c("","Simulated Mean"),
+meancompare<-data.frame(Mean=c("Theoretical Mean","Simulated Mean"),
                         Value=c(1/lambda,mean(simmean$means)))
 meancompare
 ```
@@ -103,6 +105,10 @@ varplot1
 
 ```
 
+This histogram shows the right skew of the simulated variance. The theoretical
+variance (dashed red line) lies to the right of the highest density in the plot.
+In relation to actual values, the results below show that the average variance of
+the simulations actually provides a close estimate to the theoretical value. 
 
 ```{r}
 varcompare<-data.frame(Variance=c("Theoretical Variance","Average Simulated Variance"),
@@ -160,10 +166,8 @@ simulated data differs or conforms to a normal distribution.
 
 The plots in the left column of this figure show that the distribution of 
 simulated means approximates a normal distribution with the exception of a few values.
-On the other hand, the distribution of simulated variances is highly skewed and 
-deviates from normality.The QQ plot shows that the simulated variances deviate 
-both in the leading edge of the distribution and the tail of the distribution. This 
-is because the samplesize used in the simulation (n=40) is too small of a sample 
+On the other hand, the plots in the right column show the distribution of simulated 
+variances is highly skewed and deviates from normality.The QQ plot shows that the simulated variances deviate both in the leading edge of the distribution and the tail of the distribution. This is because the sample size used in the simulation (n=40) is too small of a sample 
 for variance to conform to a normal distribution as the central limit theorem 
 states. Variance is heavily influenced by skewed distribution, and given the 
 heavily skewed nature of the exponential distribution this result is not surprising. 
