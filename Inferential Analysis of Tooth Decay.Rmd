@@ -84,3 +84,21 @@ but the OJ supplement has less spread than the VC supplement. Given these appare
 differences, we can now empirically test this using inferential methods
 
 #Inferential Analysis
+For the inferential analysis, we will be using indpendent samples t-tests. The 
+guinea pigs did not do every treatment condition, so a paired samples t-test would
+not be appropriate. The mean difference in odontoblast length between supplement 
+type will be examined first. Then we will compare odontoblast length for doseage
+.5mg vs. 1mg and 1mg vs. 2mg.
+
+## Mean Difference by supplement type
+Based on the EDA from earlier, it appears that OJ results in more tooth growth 
+than VC, thus I will conduct a one-sided t-test. This means that the null hypothesis
+is that the mean difference in tooth growth between OJ and VC is 0. The alternative
+hypothesis is that the mean difference in tooth growth between OJ and VC is greater
+than 0. I am using greater than because we are hypothesizing that OJ results in
+more tooth growth than VC
+
+```{r mean difference supplement type}
+t.test(len~supp,data=TGdata,alternative='greater')
+
+```
