@@ -14,7 +14,7 @@ distributions of the mean and variance of the exponential distribution
 which will then be compared to the theoretical mean and standard deviation of the
 distribution. 
 
-```{r,message=FALSE}
+```{r,message=FALSE,warning=FALSE}
 library(ggplot2)
 library(gridExtra)
 library(cowplot)
@@ -159,7 +159,8 @@ heavily skewed nature of the exponential distribution this result is not surpris
 In the next section of code I will re-run the simulation with a larger sample and 
 demonstrate how this produces a normally distibuted variance.
 
-##Exponential Simulation with Large Sample Size
+## Exponential Simulation with Large Sample Size
+
 ```{r normality of simulated data-larger sample size}
 #We will still use the same number of simulations for this exercise
 #size of Monte Carlo samples
