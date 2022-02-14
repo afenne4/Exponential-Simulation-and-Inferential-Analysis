@@ -142,7 +142,9 @@ simulated data differs or conforms to a normal distribution.
         stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simvar$VAR),
                                               sd=sd(simvar$VAR)))
     
-
+# The stat_qq_* functions are from the qqplotr package and generate a 95% confidence
+# interval around a reference line that indicates normality.
+    
     qqmeanplot<-ggplot(simmean,aes(sample=means))+
         stat_qq_band()+
         stat_qq_line(color='red',lwd=1)+
@@ -159,7 +161,8 @@ simulated data differs or conforms to a normal distribution.
         labs(title="QQ plot of Simulated Variance \nfrom Exponential Distribution") + 
         xlab("Theoretical Normal Values")+ylab("Simulated Values")+
         theme(plot.title = element_text(hjust = 0.5))
-    
+
+# the grid.arrange function is used to organize multiple plots in a figure    
       grid.arrange(meanplot2,varplot2,qqmeanplot,qqvarplot,nrow=2,ncol=2)
      
 ```
