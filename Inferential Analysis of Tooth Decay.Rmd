@@ -102,3 +102,11 @@ more tooth growth than VC
 t.test(len~supp,data=TGdata,alternative='greater')
 
 ```
+
+## Mean Difference by doseage levels
+```{r mean difference doseage levels}
+with(TGdata,t.test(len[dose==.5],len[dose==1],alternative='less'))
+
+with(TGdata,t.test(len[dose==1],len[dose==2],alternative='less'))
+
+```
