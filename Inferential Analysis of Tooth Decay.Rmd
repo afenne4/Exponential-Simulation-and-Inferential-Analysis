@@ -100,13 +100,32 @@ more tooth growth than VC
 
 ```{r mean difference supplement type}
 t.test(len~supp,data=TGdata,alternative='greater')
-
 ```
+
+The p-value from this one-sided t test is less than .05 which indicates that we 
+reject the null hypothesis that the mean difference in odontoblast growth between
+the OJ and VC group is equal to 0. The output of the t test also provides the lower
+interval of the confidence interval which does not contain 0 leading to the same
+conclusion as above. Thus it seems that mean growth of odontoblasts is greater 
+when vitamin C is administered via orange juice rather than ascorbic acid.
 
 ## Mean Difference by doseage levels
-```{r mean difference doseage levels}
+Since there are 3 levels of administered dose, we will do two one-sided t tests
+to determine if the length of odontoblasts increases with increasing doses. The null 
+hypotheses for these analyses are that the mean differences in odontoblast length
+between .5 mg and 1 mg treatment groups (or 1 mg and 2 mg) is equal to zero. The
+alternative hypotheses are that the average difference in odontoblast growth 
+between the 1 mg treatment and the .5 mg (or 2 mg and 1 mg) is greater than 0. To
+test this the same t test function with be used but with the alternative argument
+set to less. 
+
+```{r mean difference doseage levels .5-1}
+#To test the .5 mg and 1 mg groups
 with(TGdata,t.test(len[dose==.5],len[dose==1],alternative='less'))
-
-with(TGdata,t.test(len[dose==1],len[dose==2],alternative='less'))
-
 ```
+
+```{r mean difference doseage levels 1-2}
+#To test the 1 mg and 2 mg groups
+with(TGdata,t.test(len[dose==1],len[dose==2],alternative='less'))
+```
+
