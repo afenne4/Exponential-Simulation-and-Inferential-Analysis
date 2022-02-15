@@ -123,9 +123,18 @@ set to less.
 #To test the .5 mg and 1 mg groups
 with(TGdata,t.test(len[dose==.5],len[dose==1],alternative='less'))
 ```
+### .5 mg vs 1 mg Results
+The results from this analysis show that the null hypothesis is rejected as the
+p-value is (much) less than .05. This is also reflected in the confidence interval
+which does not contain zero. Thus guinea pigs that receive 1 mg of Vitamin C have
+greater odontoblast growth than guinea pigs that receive .5 mg of Vitamin C.
 
 ```{r mean difference doseage levels 1-2}
 #To test the 1 mg and 2 mg groups
 with(TGdata,t.test(len[dose==1],len[dose==2],alternative='less'))
 ```
 
+### 1 mg vs. 2 mg Results
+Similar to the previous t test, we reject the null hypothesis  as the p-value is 
+(much) less than .05. Thus guinea pigs that receive 2 mg of Vitamin C have
+greater odontoblast growth than guinea pigs that receive 1 mg of Vitamin C.
