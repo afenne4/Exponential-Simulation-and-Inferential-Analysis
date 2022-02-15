@@ -8,10 +8,15 @@ output: pdf_document
 
 The purpose of this analysis is to examine the Tooth Growth data set and perform
 some basic inferential statistics on it. The first step of this analysis is an
-exploratory data analysis, which will inform how to go about an inferential analysis.
+exploratory data analysis. This will be followed by an inferential analysis to test
+whether supplement delivery type and doseage levels influence odontoblast (tooth)
+growth in guinea pigs.
 
+```{r document options,echo=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
 
-```{r libraries}
+```{r libraries, message=FALSE,warning=FALSE}
 library(dplyr)
 library(ggplot2)
 ```
@@ -83,14 +88,14 @@ and 1 mg/day doseges. At the 2mg/day dose, both groups have a similar median val
 but the OJ supplement has less spread than the VC supplement. Given these apparent 
 differences, we can now empirically test this using inferential methods
 
-#Inferential Analysis
+# Inferential Analysis
 For the inferential analysis, we will be using indpendent samples t-tests. The 
 guinea pigs did not do every treatment condition, so a paired samples t-test would
 not be appropriate. The mean difference in odontoblast length between supplement 
 type will be examined first. Then we will compare odontoblast length for doseage
 .5mg vs. 1mg and 1mg vs. 2mg.
 
-## Mean Difference by supplement type
+## Mean Difference by Supplement Type
 Based on the EDA from earlier, it appears that OJ results in more tooth growth 
 than VC, thus I will conduct a one-sided t-test. This means that the null hypothesis
 is that the mean difference in tooth growth between OJ and VC is 0. The alternative
@@ -102,6 +107,7 @@ more tooth growth than VC
 t.test(len~supp,data=TGdata,alternative='greater')
 ```
 
+### Supplement Type Results
 The p-value from this one-sided t test is less than .05 which indicates that we 
 reject the null hypothesis that the mean difference in odontoblast growth between
 the OJ and VC group is equal to 0. The output of the t test also provides the lower
@@ -109,7 +115,7 @@ interval of the confidence interval which does not contain 0 leading to the same
 conclusion as above. Thus it seems that mean growth of odontoblasts is greater 
 when vitamin C is administered via orange juice rather than ascorbic acid.
 
-## Mean Difference by doseage levels
+## Mean Difference by Dose
 Since there are 3 levels of administered dose, we will do two one-sided t tests
 to determine if the length of odontoblasts increases with increasing doses. The null 
 hypotheses for these analyses are that the mean differences in odontoblast length
@@ -138,3 +144,7 @@ with(TGdata,t.test(len[dose==1],len[dose==2],alternative='less'))
 Similar to the previous t test, we reject the null hypothesis  as the p-value is 
 (much) less than .05. Thus guinea pigs that receive 2 mg of Vitamin C have
 greater odontoblast growth than guinea pigs that receive 1 mg of Vitamin C.
+
+### Appendix 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
