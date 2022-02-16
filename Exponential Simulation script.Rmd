@@ -44,7 +44,7 @@ sim<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 The first thing to be examined is a histogram of the means/variances from the Monte Carlo 
 simulation with the theoretical mean/variance overlayed as a dashed red vertical line. The
 theoretical mean is calculated as 1/lambda while the theoretical variance is calculated
-as $1/lambda^2
+as 1/lambda^2
 ``` {r  simulated mean vs theoretical mean histogram}
 # Theoretical mean
 Tmean<-1/lambda
