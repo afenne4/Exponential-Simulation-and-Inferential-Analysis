@@ -15,17 +15,19 @@ distribution. The simulated distributions of statistics will then be compared to
 distribution to see if the statistics derived from a skewed distribution are themselves
 normally distributed.
 
+```{r document options,echo=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
 ```{r,message=FALSE,warning=FALSE}
 library(ggplot2)
 library(gridExtra)
 library(cowplot)
 library(qqplotr)
 ```
-
 ## Simulations
 This simulation will use samples of size 40 with lambda=.2. There will be 1000
 simulations used to create a distribution
-
 ``` {r initial simulation}
 set.seed(11111)
 lambda=.2
@@ -36,14 +38,14 @@ n=40
 #samples stored in matrix where columns are the size of the Monte Carlo samples
 #and each row is an individual simulation
 sim<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
-
 ```
 
-## Sample Mean vs. Theoretical Mean
-This next chunk of code will show a plot of the means from the Monte Carlo 
-simulation with the theoretical mean overlayed as a dashed red vertical line. The
-theoretical mean is calculated as 1/lambda
-``` {r comparing simulated mean and theoretical mean}
+## Sample Statistics vs. Theoretical Statistics
+The first thing to be examined is a histogram of the means/variances from the Monte Carlo 
+simulation with the theoretical mean/variance overlayed as a dashed red vertical line. The
+theoretical mean is calculated as 1/lambda while the theoretical variance is calculated
+as $1/lambda^2
+``` {r  simulated mean vs theoretical mean histogram}
 # Theoretical mean
 Tmean<-1/lambda
 Tmean<-data.frame(Type="Theoretical Mean",val=Tmean)
@@ -58,32 +60,14 @@ meanplot<-ggplot(data=simmean,aes(means))+
     ggtitle("Distribution of Means \nof Exponential Simulation") +
     xlab("Means")+
     theme(plot.title = element_text(hjust = 0.5),
-          legend.title=element_blank())
-    
+          legend.title=element_blank(),
+          legend.position="bottom")
 
-meanplot+geom_histogram(aes(y=..count..),binwidth = binsize,color="black",fill="lightblue")+
+meanplot1<-meanplot+geom_histogram(aes(y=..count..),binwidth = binsize,color="black",fill="lightblue")+
     geom_vline(data=Tmean,aes(xintercept=val,color=Type),linetype="dashed",size=1.5)
-
 ```
 
-This histogram shows that the distibution of means sampled from the exponential
-distribution is roughly normal with the highest density of responses centered 
-around the theoretical mean (vertical red dashed line). The actual values of the
-theoretical and simulated means are presented below. The simulated values are 
-incredibly close to the theoretical value.
-
-```{r}
-meancompare<-data.frame(Mean=c("Theoretical Mean","Simulated Mean"),
-                        Value=c(1/lambda,mean(simmean$means)))
-meancompare
-```
-
-## Sample Variance vs. Theoretical Variance
-This next chunk of code will show a plot of the variance and standard deviation
-from the Monte Carlo simulation with the theoretical variance overlayed as a
-dashed red vertical line. The theoretical variance for exponential 
-distribution is calculated as E(Var)=1/lambda^2. 
-``` {r plot simulated variance}
+```{r Simulated Variance vs. Theoretical variance histogram,fig.height=3}
 #Theoretical variance
 Tvar<-(1/lambda^2)
 Tvar<-data.frame(Type="Theoretical Variance",val=Tvar)
@@ -95,27 +79,34 @@ varplot<-ggplot(data=simvar,aes(VAR))+
     ggtitle("Distribution of Variance \nof Exponential Simulation") +
     xlab("Variance")+
     theme(plot.title = element_text(hjust = 0.5),
-          legend.title=element_blank())
+          legend.title=element_blank(),
+          legend.position="bottom")
 
 varplot1<-varplot+
     geom_histogram(aes(y=..count..),binwidth=2.5,color="black",fill="darkgreen")+
     geom_vline(data=Tvar,aes(xintercept=val,color=Type),linetype="dashed",size=1.5) 
 
-varplot1
-
+# the grid.arrange function is used to organize multiple plots in a figure    
+grid.arrange(meanplot1,varplot1,ncol=2)
 ```
 
-This histogram shows the right skew of the simulated variance. The theoretical
-variance (dashed red line) lies to the right of the highest density in the plot.
-In relation to actual values, the results below show that the average variance of
-the simulations actually provides a close estimate to the theoretical value. 
+The histogram on the left shows that the distibution of means sampled from the exponential
+distribution is roughly normal with the highest density of responses centered 
+around the theoretical mean (vertical red dashed line). The histogram on the right
+shows the right skew of the simulated variance. The theoretical variance (vertical
+red dashed line) lies to the right of the highest density in the plot. 
 
-```{r}
-varcompare<-data.frame(Variance=c("Theoretical Variance","Average Simulated Variance"),
-                        Value=c(1/lambda^2,mean(simvar$VAR)))
-varcompare
+### Exact Theoretical and Simulated Statistics
+The actual values of the theoretical and simulated means and varinaces are presented 
+below. The simulated values are incredibly close to the theoretical values for
+both mean and variance.
+
+```{r simulated vs theoretical actual values}
+statcompare<-data.frame(Statistic=c("Theoretical Mean","Simulated Mean",
+                                    "Theoretical Variance", "Average Simulated Variance"),
+                        Value=c(1/lambda,mean(simmean$means),1/lambda^2,mean(simvar$VAR)))
+statcompare
 ```
-
 
 ## Normality of Simulated Statistics
 We will now examine the distribution of the mean, and variance, of the Monte 
@@ -130,12 +121,14 @@ reference line is a 95% confidence interval so as to indicate how much the
 simulated data differs or conforms to a normal distribution.
 
 ```{r Figure to demonstrate normality}
+#Creating histogram of simulated means with normal pdf overlayed
     meanplot2<-meanplot+
     geom_histogram(aes(y=..density..),binwidth = binsize,color="black",fill="lightblue")+
     geom_vline(data=Tmean,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+
     stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simmean$means),
                                               sd=sd(simmean$means)))
 
+#Creating histogram of simulated variances with normal pdf overlayed
     varplot2<-varplot+
     geom_histogram(aes(y=..density..),binwidth=2.5,color="black",fill="darkgreen")+
     geom_vline(data=Tvar,aes(xintercept=val),color='red',linetype="dashed",size=1.5)+ 
@@ -152,7 +145,6 @@ simulated data differs or conforms to a normal distribution.
         labs(title="QQ plot of Simulated Means \nfrom Exponential Distribution") + 
         xlab("Theoretical Normal Values")+ylab("Simulated Values")+
         theme(plot.title = element_text(hjust = 0.5))
-
     
     qqvarplot<-ggplot(simvar,aes(sample=VAR))+
         stat_qq_band()+
@@ -162,7 +154,6 @@ simulated data differs or conforms to a normal distribution.
         xlab("Theoretical Normal Values")+ylab("Simulated Values")+
         theme(plot.title = element_text(hjust = 0.5))
 
-# the grid.arrange function is used to organize multiple plots in a figure    
       grid.arrange(meanplot2,varplot2,qqmeanplot,qqvarplot,nrow=2,ncol=2)
      
 ```
@@ -174,10 +165,14 @@ variances is highly skewed and deviates from normality.The QQ plot shows that th
 for variance to conform to a normal distribution as the central limit theorem 
 states. Variance is heavily influenced by skewed distribution, and given the 
 heavily skewed nature of the exponential distribution this result is not surprising. 
-In the next section of code I will re-run the simulation with a larger sample and 
-demonstrate how this produces a normally distibuted variance.
+For the interested reader, in the appendix, I will re-run the simulation with a 
+larger sample and demonstrate how this produces a normally distibuted variance.
 
-## Exponential Simulation with Large Sample Size
+
+
+### Appendix 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
 
 ```{r normality of simulated data-larger sample size}
 #We will still use the same number of simulations for this exercise
@@ -234,6 +229,8 @@ qqvarplot2<-ggplot(simvar2,aes(sample=VAR))+
     
 grid.arrange(meanplot3,varplot3,qqmeanplot2,qqvarplot2,nrow=2,ncol=2)
 ```
+
+#### Exponential Simulation with Large Sample Size
 
 With 300 samples in each simulation, both the distributions of simulated means and 
 variances appear to be normally distributed. The pdf of the normal distribution 
