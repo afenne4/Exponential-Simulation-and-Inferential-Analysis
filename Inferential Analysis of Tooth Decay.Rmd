@@ -33,7 +33,7 @@ str(TGdata)
 ```
 
 This shows the dataset with 3 variables, len-length of tooth growth, 
-supp-The supplement type, and dose-the numeric does in mg per day. The first thing
+supp-the supplement type, and dose-the numeric does in mg per day. The first thing
 we can do is change dose to a factor variable and then look at various summary statistics
 as a function of the two factor variables, dose and supplement type.
 
@@ -144,6 +144,18 @@ with(TGdata,t.test(len[dose==1],len[dose==2],alternative='less'))
 Similar to the previous t test, we reject the null hypothesis  as the p-value is 
 (much) less than .05. Thus guinea pigs that receive 2 mg of Vitamin C have
 greater odontoblast growth than guinea pigs that receive 1 mg of Vitamin C.
+
+## Overall Conclusions
+The results from all the t test analyses indicate that both the delivery method 
+and the doseage influence the length of odontoblasts in guinea pigs. Orange juice
+results in more odontoblast growth than ascorbic acid, and larger doses of Vitamin
+C result in more odontoblast growth. It should be noted that one-sided t tests
+were used and unequal variance among the compared groups was assumed. There were
+also three comparisons done with no multiple correction methods employed which will 
+result in an inflated type I error rate. Future investigations would benefit from
+delving into the interaction between supplement type and doseage. Based on the
+exploratory data analysis, it seems that the supplement type had an effect at lower
+doses, but not at the highest dose. 
 
 ### Appendix 
 ```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
