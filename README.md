@@ -1,6 +1,6 @@
 # Exponential-Simulation-and-Inferential-Analysis
 
-There are two files in this repository, "Exponential-Simulation-script.pdf" and "Inferential-Analysis-of-Tooth-Growth.pdf". 
+There are two report files in this repository, "Exponential-Simulation-script.pdf" and "Inferential-Analysis-of-Tooth-Growth.pdf". 
 The first is primarily concerned with conducting a monte carlo simulation of the exponential distribution to examine how summary statistics 
 are distributed. It was discovered that mean values were normally distributed, but variance was skewed. Further analysis demonstrates that 
 with larger sample sizes the distribution of variances approaches a normal distribution.
@@ -19,3 +19,5 @@ A preliminary exploratory data analysis and data visualization was first conduct
 a t-test was used to determine if delivery method of Vitamin C had an impact on tooth growth. This analysis showed that orange juice resulted in more
 tooth growth than ascerbic acid. Following this, two t-tests were used to determine if increasing doseage resulted in increased tooth growth. The 
 results from these tests provided evidence in support of this hypothesis.
+
+For those interested in the raw code, the R markdown files have also been included in the repository.
