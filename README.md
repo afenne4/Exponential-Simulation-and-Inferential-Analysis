@@ -14,3 +14,8 @@ There are 3 variables of interest in this data set:
     -Tooth (Odontoblast) length measured in cm 
     -Supplement type ascerbic acid (VC) or orange juice (OJ)  
     -Dose in milligrams/day (0.5, 1.0, 2.0)
+
+A preliminary exploratory data analysis and data visualization was first conducted in order to determine any patterns in the data. Based on this,
+a t-test was used to determine if delivery method of Vitamin C had an impact on tooth growth. This analysis showed that orange juice resulted in more
+tooth growth than ascerbic acid. Following this, two t-tests were used to determine if increasing doseage resulted in increased tooth growth. The 
+results from these tests provided evidence in support of this hypothesis.
