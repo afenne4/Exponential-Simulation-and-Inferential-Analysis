@@ -19,5 +19,3 @@ A preliminary exploratory data analysis and data visualization was first conduct
 a t-test was used to determine if delivery method of Vitamin C had an impact on tooth growth. This analysis showed that orange juice resulted in more
 tooth growth than ascerbic acid. Following this, two t-tests were used to determine if increasing doseage resulted in increased tooth growth. The 
 results from these tests provided evidence in support of this hypothesis.
-
-For those interested in the raw code, the R markdown files have also been included in the repository.
