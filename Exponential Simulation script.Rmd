@@ -1,7 +1,7 @@
 ---
 title: "Exponential Simulation and Inference"
 author: "Alex Fennell"
-output: pdf_document
+output: html_document
 ---
 
 # Simulating the Exponential distribution
@@ -109,13 +109,13 @@ statcompare
 ```
 
 ## Normality of Simulated Statistics
-We will now examine the distribution of the mean, and variance, of the Monte 
+I will now examine the distribution of the mean, and variance, of the Monte 
 Carlo Simulations to see how close they approximate a normal distribution
-and conform to the central limit theorem. We will do this in two ways. The first
+and conform to the central limit theorem. I will do this in two ways. The first
 is to overlay a normal PDF (black curve) on the histograms, and the second is to use a QQ plot.
 The QQ plot provides a very obvious comparison of data to the theoretical normal
 distribution. Simulated data that does not fall on the diagonal reference line 
-does not conform to a normal distribution, with larger deviationsindicating a 
+does not conform to a normal distribution, with larger deviations indicating a 
 greater departure from normality.The dark gray region surrounding the diagonal
 reference line is a 95% confidence interval so as to indicate how much the 
 simulated data differs or conforms to a normal distribution.
@@ -166,16 +166,12 @@ for variance to conform to a normal distribution as the central limit theorem
 states. Variance is heavily influenced by skewed distribution, and given the 
 heavily skewed nature of the exponential distribution this result is not surprising. 
 For the interested reader, in the appendix, I will re-run the simulation with a 
-larger sample and demonstrate how this produces a normally distibuted variance.
+larger sample and demonstrate how this produces a normally distributed variance.
 
-
-
-### Appendix 
-```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
-```
+### Exponential Simulation with Large Sample Size
 
 ```{r normality of simulated data-larger sample size}
-#We will still use the same number of simulations for this exercise
+#I will still use the same number of simulations for this exercise
 #size of Monte Carlo samples
 n=300
 #Monte Carlo Simulation
@@ -230,8 +226,6 @@ qqvarplot2<-ggplot(simvar2,aes(sample=VAR))+
 grid.arrange(meanplot3,varplot3,qqmeanplot2,qqvarplot2,nrow=2,ncol=2)
 ```
 
-#### Exponential Simulation with Large Sample Size
-
 With 300 samples in each simulation, both the distributions of simulated means and 
 variances appear to be normally distributed. The pdf of the normal distribution 
 (black curve) overlays the histogram of simulated values and conforms quite well.
@@ -241,3 +235,8 @@ simulated means and variances are normally distributed. It can also be observed
 that spread of the simulated means and variances is much more concentrated around
 the true theoretical values in comparison to the previous simulations with n=40.
 This is an excellent demonstration of the power of the central limit theorem.
+
+### Appendix 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
+
