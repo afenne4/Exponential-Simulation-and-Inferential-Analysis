@@ -1,5 +1,5 @@
 ---
-title: "Exponential Simulation and Inference"
+title: "Central Limit Theorem Simulation"
 author: "Alex Fennell"
 output: html_document
 ---
@@ -8,12 +8,12 @@ output: html_document
 
 ## Synopsis
 This project will compare how statistics of a non-normal distribution are 
-themselves normally distributed. A Monte Carlo procedure will be used to simulate
-distributions of the mean and variance of the exponential distribution
-which will then be compared to the theoretical mean and standard deviation of the
+themselves normally distributed. Samples will be drawn from the exponential 
+distribution to generate the mean and variance. The distribution of these statistics
+will then be compared to the theoretical mean and standard deviation of the
 distribution. The simulated distributions of statistics will then be compared to a normal 
 distribution to see if the statistics derived from a skewed distribution are themselves
-normally distributed.
+normally distributed. Code is contained in an appendix following the report.
 
 ```{r document options,echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE)
@@ -31,17 +31,17 @@ simulations used to create a distribution
 ``` {r initial simulation}
 set.seed(11111)
 lambda=.2
-#Number of Monte Carlo samples
+#Number of samples
 S=1000
-#size of Monte Carlo samples
+#size of samples
 n=40
-#samples stored in matrix where columns are the size of the Monte Carlo samples
+#samples stored in matrix where columns are the size of the samples
 #and each row is an individual simulation
 sim<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 ```
 
 ## Sample Statistics vs. Theoretical Statistics
-The first thing to be examined is a histogram of the means/variances from the Monte Carlo 
+The first thing to be examined is a histogram of the means/variances from the  
 simulation with the theoretical mean/variance overlayed as a dashed red vertical line. The
 theoretical mean is calculated as 1/lambda while the theoretical variance is calculated
 as 1/lambda^2
@@ -51,7 +51,7 @@ Tmean<-1/lambda
 Tmean<-data.frame(Type="Theoretical Mean",val=Tmean)
 
 # The function rowMeans calulates the mean for each row (one simulation), which 
-#creates a distribution of means based on the Monte Carlo simulation
+#creates a distribution of means based on the simulation
 simmean<-data.frame(means=rowMeans(sim))
 # standardize bin width for all plots
 binsize=.2
@@ -172,9 +172,9 @@ larger sample and demonstrate how this produces a normally distributed variance.
 
 ```{r normality of simulated data-larger sample size}
 #I will still use the same number of simulations for this exercise
-#size of Monte Carlo samples
+#size of samples
 n=300
-#Monte Carlo Simulation
+#Simulation
 set.seed(11111)
 sim2<-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 #Calculating means and variances using the newly simulated data

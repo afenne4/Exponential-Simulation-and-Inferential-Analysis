@@ -12,7 +12,7 @@
 <meta name="author" content="Alex Fennell" />
 
 
-<title>Exponential Simulation and Inference</title>
+<title>Central Limit Theorem Simulation</title>
 
 <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -253,7 +253,7 @@ $(document).ready(function () {
   <a href="README.html">README</a>
 </li>
 <li>
-  <a href="Exponential-Simulation-script.html">Monte Carlo Simultion</a>
+  <a href="Exponential-Simulation-script.html">Central Limit Theorem Simulation</a>
 </li>
 <li>
   <a href="Inferential-Analysis-of-Tooth-Growth.html">Tooth Data Inferential Analysis</a>
@@ -270,7 +270,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Exponential Simulation and Inference</h1>
+<h1 class="title toc-ignore">Central Limit Theorem Simulation</h1>
 <h4 class="author">Alex Fennell</h4>
 
 </div>
@@ -282,13 +282,14 @@ class="section level1">
 <div id="synopsis" class="section level2">
 <h2>Synopsis</h2>
 <p>This project will compare how statistics of a non-normal distribution
-are themselves normally distributed. A Monte Carlo procedure will be
-used to simulate distributions of the mean and variance of the
-exponential distribution which will then be compared to the theoretical
-mean and standard deviation of the distribution. The simulated
-distributions of statistics will then be compared to a normal
+are themselves normally distributed. Samples will be drawn from the
+exponential distribution to generate the mean and variance. The
+distribution of these statistics will then be compared to the
+theoretical mean and standard deviation of the distribution. The
+simulated distributions of statistics will then be compared to a normal
 distribution to see if the statistics derived from a skewed distribution
-are themselves normally distributed.</p>
+are themselves normally distributed. Code is contained in an appendix
+following the report.</p>
 </div>
 <div id="simulations" class="section level2">
 <h2>Simulations</h2>
@@ -299,10 +300,10 @@ will be 1000 simulations used to create a distribution</p>
 class="section level2">
 <h2>Sample Statistics vs. Theoretical Statistics</h2>
 <p>The first thing to be examined is a histogram of the means/variances
-from the Monte Carlo simulation with the theoretical mean/variance
-overlayed as a dashed red vertical line. The theoretical mean is
-calculated as 1/lambda while the theoretical variance is calculated as
-1/lambda^2</p>
+from the<br />
+simulation with the theoretical mean/variance overlayed as a dashed red
+vertical line. The theoretical mean is calculated as 1/lambda while the
+theoretical variance is calculated as 1/lambda^2</p>
 <p><img src="Exponential-Simulation-script_files/figure-html/Simulated%20Variance%20vs.%20Theoretical%20variance%20histogram-1.png" width="672" /></p>
 <p>The histogram on the left shows that the distibution of means sampled
 from the exponential distribution is roughly normal with the highest
@@ -377,11 +378,11 @@ library(cowplot)
 library(qqplotr)
 set.seed(11111)
 lambda=.2
-#Number of Monte Carlo samples
+#Number of samples
 S=1000
-#size of Monte Carlo samples
+#size of samples
 n=40
-#samples stored in matrix where columns are the size of the Monte Carlo samples
+#samples stored in matrix where columns are the size of the samples
 #and each row is an individual simulation
 sim&lt;-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 # Theoretical mean
@@ -389,7 +390,7 @@ Tmean&lt;-1/lambda
 Tmean&lt;-data.frame(Type=&quot;Theoretical Mean&quot;,val=Tmean)
 
 # The function rowMeans calulates the mean for each row (one simulation), which 
-#creates a distribution of means based on the Monte Carlo simulation
+#creates a distribution of means based on the simulation
 simmean&lt;-data.frame(means=rowMeans(sim))
 # standardize bin width for all plots
 binsize=.2
@@ -463,9 +464,9 @@ statcompare
       grid.arrange(meanplot2,varplot2,qqmeanplot,qqvarplot,nrow=2,ncol=2)
      
 #I will still use the same number of simulations for this exercise
-#size of Monte Carlo samples
+#size of samples
 n=300
-#Monte Carlo Simulation
+#Simulation
 set.seed(11111)
 sim2&lt;-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
 #Calculating means and variances using the newly simulated data

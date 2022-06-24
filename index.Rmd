@@ -6,6 +6,6 @@ output: html_document
 
 [Click here to return to profile page](https://afenne4.github.io/Alex-Fennell.github.io/)
 
-[Click here for Monte Carlo Simulation of Central Limit Theorem](https://afenne4.github.io/Exponential-Simulation-and-Inferential-Analysis/Exponential-Simulation-script.html)
+[Click here for Simulation of Central Limit Theorem](https://afenne4.github.io/Exponential-Simulation-and-Inferential-Analysis/Exponential-Simulation-script.html)
 
-[Click here for Monte Carlo Simulation of CLT](https://afenne4.github.io/Exponential-Simulation-and-Inferential-Analysis/Inferential-Analysis-of-Tooth-Growth.html)
+[Click here for Inferential Analysis of Tooth Growth Dataset](https://afenne4.github.io/Exponential-Simulation-and-Inferential-Analysis/Inferential-Analysis-of-Tooth-Growth.html)
