@@ -7,7 +7,7 @@
       href: index.html
     - text: "README"
       href: README.html
-    - text: "Monte Carlo Simultion"
+    - text: "Monte Carlo Simulation"
       href: Exponential-Simulation-script.html
     - text: "Tooth Data Inferential Analysis"
       href: Inferential-Analysis-of-Tooth-Growth.html
