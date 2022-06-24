@@ -1,7 +1,7 @@
-  name: "Monte Carlo Simulation and Inference"
+  name: "Central Limit Theorem Simulation and Inference"
   output_dir: "docs"
   navbar:
-    title: "Monte Carlo Simulation and Inference"
+    title: "Central Limit Theorem Simulation and Inference"
     left:
     - text: "Navigation"
       href: index.html
