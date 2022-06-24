@@ -1,0 +1,16 @@
+  name: "Monte Carlo Simulation and Inference"
+  output_dir: "docs"
+  navbar:
+    title: "Monte Carlo Simulation and Inference"
+    left:
+    - text: "Navigation"
+      href: index.html
+    - text: "README"
+      href: README.html
+    - text: "Monte Carlo Simultion"
+      href: Exponential-Simulation-script.html
+    - text: "Tooth Data Inferential Analysis"
+      href: Inferential-Analysis-of-Tooth-Growth.html
+  output:
+    html_document:
+      theme: cosmo

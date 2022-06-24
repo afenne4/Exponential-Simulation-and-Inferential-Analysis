@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Alex Fennell" />
+
+
+<title>Inferential Analysis of Tooth Growth</title>
+
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Monte Carlo Simulation and Inference</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Navigation</a>
+</li>
+<li>
+  <a href="README.html">README</a>
+</li>
+<li>
+  <a href="Exponential-Simulation-script.html">Monte Carlo Simultion</a>
+</li>
+<li>
+  <a href="Inferential-Analysis-of-Tooth-Growth.html">Tooth Data Inferential Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Inferential Analysis of Tooth Growth</h1>
+<h4 class="author">Alex Fennell</h4>
+
+</div>
+
+
+<div id="synopsis" class="section level1">
+<h1>Synopsis</h1>
+<p>The purpose of this analysis is to examine the Tooth Growth data set
+and perform some basic inferential statistics on it. The first step of
+this analysis is an exploratory data analysis. This will be followed by
+an inferential analysis to test whether supplement delivery type and
+doseage levels influence odontoblast (tooth) growth in guinea pigs. Code
+is contained in the appendix following the report.</p>
+</div>
+<div id="exploratory-data-analysis" class="section level1">
+<h1>Exploratory Data Analysis</h1>
+<div id="reading-in-the-data" class="section level2">
+<h2>Reading in the data</h2>
+<p>The Tooth Growth data set is already available as it is part of the R
+datasets package. Using the str function, the basic structure of the
+dataset can be seen.</p>
+<pre><code>## &#39;data.frame&#39;:    60 obs. of  3 variables:
+##  $ len : num  4.2 11.5 7.3 5.8 6.4 10 11.2 11.2 5.2 7 ...
+##  $ supp: Factor w/ 2 levels &quot;OJ&quot;,&quot;VC&quot;: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ dose: num  0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 ...</code></pre>
+<div id="summary-statistics" class="section level3">
+<h3>Summary Statistics</h3>
+<p>This shows the dataset with 3 variables, len-length of tooth growth,
+supp-the supplement type, and dose-the numeric does in mg per day. The
+first thing we can do is change dose to a factor variable and then look
+at various summary statistics as a function of the two factor variables,
+dose and supplement type.</p>
+<pre><code>## # A tibble: 6 x 7
+## # Groups:   supp [2]
+##   supp  dose   MEAN    SD   MAX   MIN COUNT
+##   &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+## 1 OJ    0.5   13.2   4.46  21.5   8.2    10
+## 2 OJ    1     22.7   3.91  27.3  14.5    10
+## 3 OJ    2     26.1   2.66  30.9  22.4    10
+## 4 VC    0.5    7.98  2.75  11.5   4.2    10
+## 5 VC    1     16.8   2.52  22.5  13.6    10
+## 6 VC    2     26.1   4.80  33.9  18.5    10</code></pre>
+<p>This output shows that mean length of odontoblasts increases with
+dose across both supplement types. The maximum and minimum values also
+increase as a funciton of increasing dosage. The sample size is the same
+across all supplement type and dose manipulations. It is difficult to
+tell if the mean odontoblast length differs across supplement types, so
+in the next block of code, we will examine this.</p>
+<pre><code>## # A tibble: 2 x 5
+##   supp   MEAN    SD   MAX   MIN
+##   &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 OJ     20.7  6.61  30.9   8.2
+## 2 VC     17.0  8.27  33.9   4.2</code></pre>
+<p>This shows that on average the mean odntoblast length for guinea pigs
+given orange juice is longer than guinea pigs given ascorbic acid. In
+addition to this, the maximum and minimum values for guinea pigs in the
+OJ group are not as extreme as those in the VC group.</p>
+</div>
+</div>
+<div id="boxplot-analysis" class="section level2">
+<h2>Boxplot analysis</h2>
+<p><img src="Inferential-Analysis-of-Tooth-Growth_files/figure-html/boxplot%20analysis-1.png" width="672" /></p>
+<p>This boxplot better demonstrates the relationship between supplement
+type, dose, and odontoblast length. In agreement with the previous
+outputs, it can be seen that odontoblast length increases as the daily
+doseage increases across both supplement types. The two supplement types
+do seem to differ in their efficacy at lower doseages. The OJ supplement
+results in more odontoblast length than the VC Supplement at .5 and 1
+mg/day doseges. At the 2mg/day dose, both groups have a similar median
+value, but the OJ supplement has less spread than the VC supplement.
+Given these apparent differences, I can now empirically test this using
+inferential methods</p>
+</div>
+</div>
+<div id="inferential-analysis" class="section level1">
+<h1>Inferential Analysis</h1>
+<p>For the inferential analysis, I will be using indpendent samples
+t-tests. The guinea pigs did not do every treatment condition, so a
+paired samples t-test would not be appropriate. The mean difference in
+odontoblast length between supplement type will be examined first. Then
+I will compare odontoblast length for doseage .5mg vs. 1mg and 1mg
+vs. 2mg.</p>
+<div id="mean-difference-by-supplement-type" class="section level2">
+<h2>Mean Difference by Supplement Type</h2>
+<p>Based on the EDA from earlier, it appears that OJ results in more
+tooth growth than VC, thus I will conduct a one-sided t-test. This means
+that the null hypothesis is that the mean difference in tooth growth
+between OJ and VC is 0. The alternative hypothesis is that the mean
+difference in tooth growth between OJ and VC is greater than 0. I am
+using greater than because I am hypothesizing that OJ results in more
+tooth growth than VC</p>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  len by supp
+## t = 1.9153, df = 55.309, p-value = 0.03032
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  0.4682687       Inf
+## sample estimates:
+## mean in group OJ mean in group VC 
+##         20.66333         16.96333</code></pre>
+<div id="supplement-type-results" class="section level3">
+<h3>Supplement Type Results</h3>
+<p>The p-value from this one-sided t test is less than .05 which
+indicates that the null hypothesis that the mean difference in
+odontoblast growth between the OJ and VC group is equal to 0 is
+rejected. The output of the t test also provides the lower interval of
+the confidence interval which does not contain 0 leading to the same
+conclusion as above. Thus it seems that mean growth of odontoblasts is
+greater when vitamin C is administered via orange juice rather than
+ascorbic acid.</p>
+</div>
+</div>
+<div id="mean-difference-by-dose" class="section level2">
+<h2>Mean Difference by Dose</h2>
+<p>Since there are 3 levels of administered dose, I will do two
+one-sided t tests to determine if the length of odontoblasts increases
+with increasing doses. The null hypotheses for these analyses are that
+the mean differences in odontoblast length between .5 mg and 1 mg
+treatment groups (or 1 mg and 2 mg) is equal to zero. The alternative
+hypotheses are that the average difference in odontoblast growth between
+the 1 mg treatment and the .5 mg (or 2 mg and 1 mg) is greater than 0.
+To test this the same t test function with be used but with the
+alternative argument set to less.</p>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  len[dose == 0.5] and len[dose == 1]
+## t = -6.4766, df = 37.986, p-value = 6.342e-08
+## alternative hypothesis: true difference in means is less than 0
+## 95 percent confidence interval:
+##       -Inf -6.753323
+## sample estimates:
+## mean of x mean of y 
+##    10.605    19.735</code></pre>
+<div id="mg-vs-1-mg-results" class="section level3">
+<h3>.5 mg vs 1 mg Results</h3>
+<p>The results from this analysis show that the null hypothesis is
+rejected as the p-value is (much) less than .05. This is also reflected
+in the confidence interval which does not contain zero. Thus guinea pigs
+that receive 1 mg of Vitamin C have greater odontoblast growth than
+guinea pigs that receive .5 mg of Vitamin C.</p>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  len[dose == 1] and len[dose == 2]
+## t = -4.9005, df = 37.101, p-value = 9.532e-06
+## alternative hypothesis: true difference in means is less than 0
+## 95 percent confidence interval:
+##      -Inf -4.17387
+## sample estimates:
+## mean of x mean of y 
+##    19.735    26.100</code></pre>
+</div>
+<div id="mg-vs.-2-mg-results" class="section level3">
+<h3>1 mg vs. 2 mg Results</h3>
+<p>Similar to the previous t test, the null hypothesis is rejected as
+the p-value is (much) less than .05. Thus guinea pigs that receive 2 mg
+of Vitamin C have greater odontoblast growth than guinea pigs that
+receive 1 mg of Vitamin C.</p>
+</div>
+</div>
+<div id="overall-conclusions" class="section level2">
+<h2>Overall Conclusions</h2>
+<p>The results from all the t test analyses indicate that both the
+delivery method and the doseage influence the length of odontoblasts in
+guinea pigs. Orange juice results in more odontoblast growth than
+ascorbic acid, and larger doses of Vitamin C result in more odontoblast
+growth. It should be noted that one-sided t tests were used and unequal
+variance among the compared groups was assumed. There were also three
+comparisons done with no multiple correction methods employed which will
+result in an inflated type I error rate. Future investigations would
+benefit from delving into the interaction between supplement type and
+doseage. Based on the exploratory data analysis, it seems that the
+supplement type had an effect at lower doses, but not at the highest
+dose.</p>
+<div id="appendix" class="section level3">
+<h3>Appendix</h3>
+<pre class="r"><code>knitr::opts_chunk$set(echo=FALSE)
+library(dplyr)
+library(ggplot2)
+TGdata&lt;-ToothGrowth
+str(TGdata)
+# Need to change dose column into a factor rather than a numeric variable
+TGdata$dose&lt;-as.factor(TGdata$dose)
+
+Summary_TGdata&lt;-TGdata %&gt;%
+    group_by(supp,dose)%&gt;%
+    summarise(MEAN=mean(len),SD=sd(len),MAX=max(len),MIN=min(len),COUNT=n())
+Summary_TGdata
+suppcomp&lt;-TGdata %&gt;%
+    group_by(supp)%&gt;%
+    summarise(MEAN=mean(len),SD=sd(len),MAX=max(len),MIN=min(len))
+suppcomp
+box1&lt;-ggplot(TGdata,aes(x=dose,y=len,fill=supp))+
+    geom_boxplot(notch=FALSE)+
+    labs(title=&quot;Length of Odontoblasts as a Function of\n Supplement Type and Doseage&quot;,
+           x=&quot;Dose (mg/day)&quot;, y=&quot;Length&quot;,fill=&quot;Supplement \nType&quot;)+
+    theme(plot.title = element_text(hjust = 0.5))
+
+box1
+t.test(len~supp,data=TGdata,alternative=&#39;greater&#39;)
+#To test the .5 mg and 1 mg groups
+with(TGdata,t.test(len[dose==.5],len[dose==1],alternative=&#39;less&#39;))
+#To test the 1 mg and 2 mg groups
+with(TGdata,t.test(len[dose==1],len[dose==2],alternative=&#39;less&#39;))</code></pre>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

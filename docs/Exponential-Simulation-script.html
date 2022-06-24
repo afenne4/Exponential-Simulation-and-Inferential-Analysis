@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Alex Fennell" />
+
+
+<title>Exponential Simulation and Inference</title>
+
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Monte Carlo Simulation and Inference</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Navigation</a>
+</li>
+<li>
+  <a href="README.html">README</a>
+</li>
+<li>
+  <a href="Exponential-Simulation-script.html">Monte Carlo Simultion</a>
+</li>
+<li>
+  <a href="Inferential-Analysis-of-Tooth-Growth.html">Tooth Data Inferential Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Exponential Simulation and Inference</h1>
+<h4 class="author">Alex Fennell</h4>
+
+</div>
+
+
+<div id="simulating-the-exponential-distribution"
+class="section level1">
+<h1>Simulating the Exponential distribution</h1>
+<div id="synopsis" class="section level2">
+<h2>Synopsis</h2>
+<p>This project will compare how statistics of a non-normal distribution
+are themselves normally distributed. A Monte Carlo procedure will be
+used to simulate distributions of the mean and variance of the
+exponential distribution which will then be compared to the theoretical
+mean and standard deviation of the distribution. The simulated
+distributions of statistics will then be compared to a normal
+distribution to see if the statistics derived from a skewed distribution
+are themselves normally distributed.</p>
+</div>
+<div id="simulations" class="section level2">
+<h2>Simulations</h2>
+<p>This simulation will use samples of size 40 with lambda=.2. There
+will be 1000 simulations used to create a distribution</p>
+</div>
+<div id="sample-statistics-vs.-theoretical-statistics"
+class="section level2">
+<h2>Sample Statistics vs. Theoretical Statistics</h2>
+<p>The first thing to be examined is a histogram of the means/variances
+from the Monte Carlo simulation with the theoretical mean/variance
+overlayed as a dashed red vertical line. The theoretical mean is
+calculated as 1/lambda while the theoretical variance is calculated as
+1/lambda^2</p>
+<p><img src="Exponential-Simulation-script_files/figure-html/Simulated%20Variance%20vs.%20Theoretical%20variance%20histogram-1.png" width="672" /></p>
+<p>The histogram on the left shows that the distibution of means sampled
+from the exponential distribution is roughly normal with the highest
+density of responses centered around the theoretical mean (vertical red
+dashed line). The histogram on the right shows the right skew of the
+simulated variance. The theoretical variance (vertical red dashed line)
+lies to the right of the highest density in the plot.</p>
+<div id="exact-theoretical-and-simulated-statistics"
+class="section level3">
+<h3>Exact Theoretical and Simulated Statistics</h3>
+<p>The actual values of the theoretical and simulated means and
+varinaces are presented below. The simulated values are incredibly close
+to the theoretical values for both mean and variance.</p>
+<pre><code>##                    Statistic     Value
+## 1           Theoretical Mean  5.000000
+## 2             Simulated Mean  5.020674
+## 3       Theoretical Variance 25.000000
+## 4 Average Simulated Variance 25.078391</code></pre>
+</div>
+</div>
+<div id="normality-of-simulated-statistics" class="section level2">
+<h2>Normality of Simulated Statistics</h2>
+<p>I will now examine the distribution of the mean, and variance, of the
+Monte Carlo Simulations to see how close they approximate a normal
+distribution and conform to the central limit theorem. I will do this in
+two ways. The first is to overlay a normal PDF (black curve) on the
+histograms, and the second is to use a QQ plot. The QQ plot provides a
+very obvious comparison of data to the theoretical normal distribution.
+Simulated data that does not fall on the diagonal reference line does
+not conform to a normal distribution, with larger deviations indicating
+a greater departure from normality.The dark gray region surrounding the
+diagonal reference line is a 95% confidence interval so as to indicate
+how much the simulated data differs or conforms to a normal
+distribution.</p>
+<p><img src="Exponential-Simulation-script_files/figure-html/Figure%20to%20demonstrate%20normality-1.png" width="672" /></p>
+<p>The plots in the left column of this figure show that the
+distribution of simulated means approximates a normal distribution with
+the exception of a few values. On the other hand, the plots in the right
+column show the distribution of simulated variances is highly skewed and
+deviates from normality.The QQ plot shows that the simulated variances
+deviate both in the leading edge of the distribution and the tail of the
+distribution. This is because the sample size used in the simulation
+(n=40) is too small of a sample for variance to conform to a normal
+distribution as the central limit theorem states. Variance is heavily
+influenced by skewed distribution, and given the heavily skewed nature
+of the exponential distribution this result is not surprising. For the
+interested reader, in the appendix, I will re-run the simulation with a
+larger sample and demonstrate how this produces a normally distributed
+variance.</p>
+<div id="exponential-simulation-with-large-sample-size"
+class="section level3">
+<h3>Exponential Simulation with Large Sample Size</h3>
+<p><img src="Exponential-Simulation-script_files/figure-html/normality%20of%20simulated%20data-larger%20sample%20size-1.png" width="672" /></p>
+<p>With 300 samples in each simulation, both the distributions of
+simulated means and variances appear to be normally distributed. The pdf
+of the normal distribution (black curve) overlays the histogram of
+simulated values and conforms quite well. In the QQ plot most all values
+for the simulated means and variances fall within the 95% confidence
+interval (dark grey area) indicating the distributions of simulated
+means and variances are normally distributed. It can also be observed
+that spread of the simulated means and variances is much more
+concentrated around the true theoretical values in comparison to the
+previous simulations with n=40. This is an excellent demonstration of
+the power of the central limit theorem.</p>
+</div>
+<div id="appendix" class="section level3">
+<h3>Appendix</h3>
+<pre class="r"><code>knitr::opts_chunk$set(echo=FALSE)
+library(ggplot2)
+library(gridExtra)
+library(cowplot)
+library(qqplotr)
+set.seed(11111)
+lambda=.2
+#Number of Monte Carlo samples
+S=1000
+#size of Monte Carlo samples
+n=40
+#samples stored in matrix where columns are the size of the Monte Carlo samples
+#and each row is an individual simulation
+sim&lt;-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
+# Theoretical mean
+Tmean&lt;-1/lambda
+Tmean&lt;-data.frame(Type=&quot;Theoretical Mean&quot;,val=Tmean)
+
+# The function rowMeans calulates the mean for each row (one simulation), which 
+#creates a distribution of means based on the Monte Carlo simulation
+simmean&lt;-data.frame(means=rowMeans(sim))
+# standardize bin width for all plots
+binsize=.2
+#combine mean and theoretical mean into one dataframe
+meanplot&lt;-ggplot(data=simmean,aes(means))+
+    ggtitle(&quot;Distribution of Means \nof Exponential Simulation&quot;) +
+    xlab(&quot;Means&quot;)+
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank(),
+          legend.position=&quot;bottom&quot;)
+
+meanplot1&lt;-meanplot+geom_histogram(aes(y=..count..),binwidth = binsize,color=&quot;black&quot;,fill=&quot;lightblue&quot;)+
+    geom_vline(data=Tmean,aes(xintercept=val,color=Type),linetype=&quot;dashed&quot;,size=1.5)
+#Theoretical variance
+Tvar&lt;-(1/lambda^2)
+Tvar&lt;-data.frame(Type=&quot;Theoretical Variance&quot;,val=Tvar)
+# Using the apply function to calculate the variance for each row (one simulation),
+# which creates a distribution of simulated variances
+simvar&lt;-data.frame(VAR=apply(sim,1,var))
+
+varplot&lt;-ggplot(data=simvar,aes(VAR))+
+    ggtitle(&quot;Distribution of Variance \nof Exponential Simulation&quot;) +
+    xlab(&quot;Variance&quot;)+
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank(),
+          legend.position=&quot;bottom&quot;)
+
+varplot1&lt;-varplot+
+    geom_histogram(aes(y=..count..),binwidth=2.5,color=&quot;black&quot;,fill=&quot;darkgreen&quot;)+
+    geom_vline(data=Tvar,aes(xintercept=val,color=Type),linetype=&quot;dashed&quot;,size=1.5) 
+
+# the grid.arrange function is used to organize multiple plots in a figure    
+grid.arrange(meanplot1,varplot1,ncol=2)
+statcompare&lt;-data.frame(Statistic=c(&quot;Theoretical Mean&quot;,&quot;Simulated Mean&quot;,
+                                    &quot;Theoretical Variance&quot;, &quot;Average Simulated Variance&quot;),
+                        Value=c(1/lambda,mean(simmean$means),1/lambda^2,mean(simvar$VAR)))
+statcompare
+#Creating histogram of simulated means with normal pdf overlayed
+    meanplot2&lt;-meanplot+
+    geom_histogram(aes(y=..density..),binwidth = binsize,color=&quot;black&quot;,fill=&quot;lightblue&quot;)+
+    geom_vline(data=Tmean,aes(xintercept=val),color=&#39;red&#39;,linetype=&quot;dashed&quot;,size=1.5)+
+    stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simmean$means),
+                                              sd=sd(simmean$means)))
+
+#Creating histogram of simulated variances with normal pdf overlayed
+    varplot2&lt;-varplot+
+    geom_histogram(aes(y=..density..),binwidth=2.5,color=&quot;black&quot;,fill=&quot;darkgreen&quot;)+
+    geom_vline(data=Tvar,aes(xintercept=val),color=&#39;red&#39;,linetype=&quot;dashed&quot;,size=1.5)+ 
+        stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simvar$VAR),
+                                              sd=sd(simvar$VAR)))
+    
+# The stat_qq_* functions are from the qqplotr package and generate a 95% confidence
+# interval around a reference line that indicates normality.
+    
+    qqmeanplot&lt;-ggplot(simmean,aes(sample=means))+
+        stat_qq_band()+
+        stat_qq_line(color=&#39;red&#39;,lwd=1)+
+        stat_qq_point() +
+        labs(title=&quot;QQ plot of Simulated Means \nfrom Exponential Distribution&quot;) + 
+        xlab(&quot;Theoretical Normal Values&quot;)+ylab(&quot;Simulated Values&quot;)+
+        theme(plot.title = element_text(hjust = 0.5))
+    
+    qqvarplot&lt;-ggplot(simvar,aes(sample=VAR))+
+        stat_qq_band()+
+        stat_qq_line(color=&#39;red&#39;,lwd=1)+
+        stat_qq_point() +
+        labs(title=&quot;QQ plot of Simulated Variance \nfrom Exponential Distribution&quot;) + 
+        xlab(&quot;Theoretical Normal Values&quot;)+ylab(&quot;Simulated Values&quot;)+
+        theme(plot.title = element_text(hjust = 0.5))
+
+      grid.arrange(meanplot2,varplot2,qqmeanplot,qqvarplot,nrow=2,ncol=2)
+     
+#I will still use the same number of simulations for this exercise
+#size of Monte Carlo samples
+n=300
+#Monte Carlo Simulation
+set.seed(11111)
+sim2&lt;-matrix(rexp(n*S,lambda),nrow=S,ncol=n)
+#Calculating means and variances using the newly simulated data
+simmean2&lt;-data.frame(means=rowMeans(sim2))
+simvar2&lt;-data.frame(VAR=apply(sim2,1,var))
+simsd2&lt;-data.frame(SD=apply(sim2,1,sd))
+
+binsize=.06
+#New plot for the distribution of simulated means with n=300
+meanplot3&lt;-ggplot(data=simmean2,aes(means))+
+    ggtitle(&quot;Distribution of Means \nof Exponential Simulation n=300&quot;) +
+    xlab(&quot;Means&quot;)+
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank())+
+    geom_histogram(aes(y=..density..),binwidth = binsize,color=&quot;black&quot;,fill=&quot;lightblue&quot;)+
+    geom_vline(data=Tmean,aes(xintercept=val),color=&#39;red&#39;,linetype=&quot;dashed&quot;,size=1.5)+
+    stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simmean2$means),
+                                              sd=sd(simmean2$means)))
+
+
+varplot3&lt;-ggplot(data=simvar2,aes(VAR))+
+    ggtitle(&quot;Distribution of Variance \nof Exponential Simulation n=300&quot;) +
+    xlab(&quot;Variance&quot;)+
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.title=element_blank())+
+    geom_histogram(aes(y=..density..),binwidth=.7,color=&quot;black&quot;,fill=&quot;darkgreen&quot;)+
+    geom_vline(data=Tvar,aes(xintercept=val),color=&#39;red&#39;,linetype=&quot;dashed&quot;,size=1.5)+ 
+        stat_function(fun=dnorm,lwd=1.5,args=list(mean=mean(simvar2$VAR),
+                                              sd=sd(simvar2$VAR)))
+
+
+qqmeanplot2&lt;-ggplot(simmean2,aes(sample=means))+
+        stat_qq_band()+
+        stat_qq_line(color=&#39;red&#39;,lwd=1)+
+        stat_qq_point() +
+        labs(title=&quot;QQ plot of Simulated Means from \nExponential Distribution n=300&quot;) + 
+        xlab(&quot;Theoretical Normal Values&quot;)+ylab(&quot;Simulated Values&quot;)+
+        theme(plot.title = element_text(hjust = 0.5))
+
+    
+qqvarplot2&lt;-ggplot(simvar2,aes(sample=VAR))+
+        stat_qq_band()+
+        stat_qq_line(color=&#39;red&#39;,lwd=1)+
+        stat_qq_point() +
+        labs(title=&quot;QQ plot of Simulated Variance from \nExponential Distribution n=300&quot;) + 
+        xlab(&quot;Theoretical Normal Values&quot;)+ylab(&quot;Simulated Values&quot;)+
+        theme(plot.title = element_text(hjust = 0.5))
+    
+grid.arrange(meanplot3,varplot3,qqmeanplot2,qqvarplot2,nrow=2,ncol=2)</code></pre>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
